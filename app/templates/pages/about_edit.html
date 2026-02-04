@@ -1,0 +1,43 @@
+
+
+
+{% extends 'index.html' %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+{% endblock %}
+
+{% block content %}
+    <section class="form-page flex-center flex-column">
+
+        <div class="form-card">
+            <h2 class="text-center">Edit Biography</h2>
+
+            <form method="POST" class="form" novalidate>
+                {{ form.hidden_tag() }}
+
+                <div class="form-group">
+                    {{ form.content.label }}
+                    {{ form.content(id="editor") }}
+                </div>
+
+                <div class="form-actions flex-center">
+                    {{ form.save(class="btn") }}
+                    <a href="{{ url_for('pages.pages') }}" class="btn btn-danger">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- CKEditor = editeur de text js -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/38.0.1/classic/ckeditor.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {     /* attends a recharger la page */
+            ClassicEditor       /* change textare pour le editeur */
+                .create(document.querySelector('#editor'))
+                .catch(error => console.error(error));
+        });
+    </script>
+
+{% endblock %}

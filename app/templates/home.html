@@ -1,0 +1,178 @@
+
+{% extends 'index.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+
+{% block content %}
+
+    <section class="hero-home">
+        <img src="{{ url_for('static', filename='img/home_hero_camera.jpeg') }}" alt="camera_home">
+        
+        <div class="container">
+            <h1>WE MAKE CREATIVE THINGS EVERYDAY</h1>
+            <p>We are digital agency that helps immersive and engaging user experiences that</p>
+            <a href="{{ url_for('portfolio.portfolio') }}" class="btn">VIEW OUR WORKS</a>
+        </div>
+    </section>
+
+
+    <section class="banner">
+        <div class="container">
+            <address>
+                27 Division St, New York,<br>NY 10002, USA<br>
+                +1800 123 654<br><br>
+                <a href="mailto:987frisk.agency@gmail.com">987frisk.agency@gmail.com</a>
+            </address>
+        </div>
+        <p class="slogan-flexibility">UNPARALLELED FLEXIBILITY * WE GIVE UNPARALLELED FIELD</p>
+    </section>
+
+
+    <section class="cards">
+        <h2>WHAT WE CAN DO FOR OUR CLIENTS</h2>
+        <div class="container cards-2">
+
+            <div class="card card_desing">
+                <h3>Branding Desing</h3>
+                <a href="{{ url_for('pages.branding') }}" class="btn">VIEW DETAILS</a>
+            </div>
+            
+            <div class="card card_develope">
+                <h3>AlbumPhoto Developement</h3>
+                <a href="{{ url_for('pages.branding') }}" class="btn">VIEW DETAILS</a>
+            </div>
+
+            <div class="card card_modelling">
+                <h3>Illustration Modelling</h3>
+                <a href="{{ url_for('pages.branding') }}" class="btn">VIEW DETAILS</a>
+            </div>
+
+            <div class="card card_marketing">
+                <h3>Digital Marketing</h3>
+                <a href="{{ url_for('pages.branding') }}" class="btn">VIEW DETAILS</a>
+            </div>
+            
+        </div>
+    </section>
+
+
+    <section class="services">
+        <div class="container">
+            <img src="{{ url_for('static', filename='img/paisage1.jpeg') }}" alt="services img">
+            <div class="container_del_container">
+                <h2>WE OFFER A WIDE RANGE OF BRAND SERVICES</h2>
+                <p>We are a creative agency working with brands building insighful strategy, creating unique desings and crafting value</p>
+                <p class="services_list">
+                    branding<br>
+                    developpement<br>
+                    advertising<br>
+                    marketing
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="img_scroll">
+        <div class="container">
+            <h2>DISCOVER OUR SELECTED PROJECTS</h2>
+        </div>
+
+        <div class="scroll_container">
+            {% for project in projects %}
+                <a href="{{ url_for('portfolio.portfolio_project', project_id=project.id) }}">
+                <img src="{{ url_for('static', filename='uploads/portfolio/' ~ project.image) }}" alt="photo project">
+            </a>
+            {% endfor %}
+        </div>
+        
+    </section>
+
+
+    <section class="events flex-column">
+        <div class="container">
+            <br>
+            <hr>
+
+            <h4>2025</h4>
+            <h3>New York Desing Week</h3>
+            <p>
+                We bring to life the most complex projects, specialize
+            </p>
+            <h4>MAIN DEVELOPER</h4>
+
+            <hr>
+            <br>
+            
+            <h4>2024</h4>
+            <h3>Alabhama Desing Week</h3>
+            <p>
+                We bring to life the most complex projects, specialize
+            </p>
+            <h4>ANIMATOR</h4>
+            
+            <hr>
+            <br>
+
+            <h4>2021</h4>
+            <h3>Best Web Flow</h3>
+            <p>
+                We bring to life the most complex projects, specialize
+            </p>
+            <h4>DEVELOPER</h4>
+
+            <hr>
+            <br>
+
+            <h4>2020</h4>
+            <h3>Berlin Interactive Award</h3>
+            <p>
+                We bring to life the most complex projects, specialize
+            </p>
+            <h4>BEST INNOVATIONS</h4>
+
+            <hr>
+            <br>
+        </div>
+    </section>
+
+
+    <section class="cards">
+        <h2>Read Our Articles and News</h2>
+
+        <div class="container cards-3">
+
+        {% for post in posts %}
+            
+            {% if post.image %}
+                {% set image_url = url_for('static', filename='uploads/blog/' ~ post.image) %}
+            {% else %}
+                {% set image_url = url_for('static', filename='img/default_img.jpg') %}
+            {% endif %}
+
+            <div class="card" style="background-image: url('{{ image_url }}');">
+                <h3>{{ post.title }}</h3>
+                <a href="{{ url_for('blog.blog') }}" class="btn">READ MORE</a>
+            </div>
+
+        {% endfor %}  
+
+        </div>
+    </section>
+
+
+    <section id="lets_create">
+        <div class="container">
+            <h3>L'ets Create Something Great</h3>
+            <p>
+                We shift your from today's reality to tomorrow's
+                potential, ensuring.
+            </p>
+            <a href="mailto:987frisk.agency@mail.com" class="btn">LET'S TALK WITH US</a>
+        </div>
+    </section>
+
+{% endblock %}

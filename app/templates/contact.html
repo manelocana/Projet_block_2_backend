@@ -1,0 +1,77 @@
+
+{% extends 'index.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact.css') }}">
+{% endblock %}
+
+
+{% block content %}
+
+    <section class="hero hero-contact">
+        <img src="{{ url_for('static', filename='img/aboutme_alexmore.jpg') }}" alt="contact image">
+        <div class="container">
+            <h1>Contact</h1>
+        </div>
+    </section>
+
+    <section class="cards">
+        <div class="container cards-3">
+            <div class="card card_contact">
+                <h3>Email Address</h3>
+                <p>frisk.agency@mail.com</p>
+                <a href="mailto:frisk.agency@mail.com" class="btn">SEND MESSAGE</a>
+            </div>
+            <div class="card card_contact">
+                <h3>Headquarters</h3>
+                <p>27 Division St, New York,<br>
+                NY 10002, Usa</p>
+
+                <a href="https://www.google.com/maps/place/27+Division+St,+New+York,+NY+10002,+%C3%89tats-Unis/@40.7139558,-97.2018888,4z/data=!4m20!1m13!4m12!1m4!2m2!1d0.5275648!2d43.8665216!4e1!1m6!1m2!1s0x89c25a263f3910db:0xd6e6cdf32a6b11b1!2s27+Division+St,+New+York,+NY+10002,+%C3%89tats-Unis!2m2!1d-73.996116!2d40.7139743!3m5!1s0x89c25a263f3910db:0xd6e6cdf32a6b11b1!8m2!3d40.7139743!4d-73.996116!16s%2Fg%2F11bw3xg9xp?entry=ttu&g_ep=EgoyMDI1MDkyNC4wIKXMDSoASAFQAw%3D%3D"
+                target="_blank" 
+                class="btn">
+                GET DIRECTION
+                </a>
+
+            </div>
+
+            <div class="card card_contact">
+                <h3>Phone Number</h3>
+                <p>+1800 123 654 987</p>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="map_container">
+        <h2>Address</h2>
+        <div class="container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d24774119.027031202!2d-97.20188880801626!3d40.713955826286046!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a263f3910db%3A0xd6e6cdf32a6b11b1!2s27%20Division%20St%2C%20New%20York%2C%20NY%2010002%2C%20%C3%89tats-Unis!5e0!3m2!1sfr!2sfr!4v1759015440985!5m2!1sfr!2sfr" 
+                width="600" height="450" style="border:0;" 
+                allowfullscreen="" loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>    
+            <br>
+            <a href="https://www.google.com/maps/place/27+Division+St,+New+York,+NY+10002,+%C3%89tats-Unis/@40.7139558,-97.2018888,4z/data=!4m20!1m13!4m12!1m4!2m2!1d0.5275648!2d43.8665216!4e1!1m6!1m2!1s0x89c25a263f3910db:0xd6e6cdf32a6b11b1!2s27+Division+St,+New+York,+NY+10002,+%C3%89tats-Unis!2m2!1d-73.996116!2d40.7139743!3m5!1s0x89c25a263f3910db:0xd6e6cdf32a6b11b1!8m2!3d40.7139743!4d-73.996116!16s%2Fg%2F11bw3xg9xp?entry=ttu&g_ep=EgoyMDI1MDkyNC4wIKXMDSoASAFQAw%3D%3D"
+                target="_blank" class="btn">
+                GOOGLE MAPS
+            </a>
+        </div>
+        <div class="form_container">
+            <div class="container">
+                <h2>Have Any Project on Your Mind?</h2>
+                <p>Great! We're excited to hear from you and let's start something</p>
+                <form id="form_contact">
+                    <input type="text" id="name" name="name" placeholder="Full name*">
+                    <input type="email" id="email" name="email" placeholder="Email address*">
+                    <input type="url" id="web" name="web" placeholder="Website link*">
+                    <textarea 
+                        id="message" name="message" placeholder="How Can We Help You*" rows="4">
+                    </textarea>
+                </form>
+                <a form="form_contact" type="submit" class="btn">SEND MESSAGE</a>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

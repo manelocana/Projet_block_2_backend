@@ -1,0 +1,19 @@
+
+
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Flask
+instance/
+.env
+venv/
+.env/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
