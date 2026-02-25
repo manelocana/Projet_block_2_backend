@@ -152,135 +152,173 @@ Permet :
 
 ## 5️⃣ Modèle (POO)
 
-Chaque entité possède sa classe :
+### Chaque entité possède sa classe :
 
-User
+- User
 
-Artwork
+- Artwork
 
-Méthodes typiques :
+- Méthodes typiques :
 
-create()
+- create()
 
-find_by_email()
+- find_by_email()
 
-update()
+- update()
 
-delete()
+- delete()
 
-Le modèle :
 
-Interagit uniquement avec MySQL
 
-Ne connaît rien du HTTP
+### Le modèle :
 
-Séparation claire :
+- Interagit uniquement avec MySQL
 
-Modèle = Base de données
-Controller = Logique métier
-main.py = HTTP
-6️⃣ Controller (logique métier)
+- Ne connaît rien du HTTP
 
-Exemple user_controller.py :
 
-Reçoit les données de la requête
+### Séparation claire :
 
-Valide les champs
+    Modèle = Base de données
+    Controller = Logique métier
+    main.py = HTTP
 
-Appelle le modèle
 
-Retourne (response, status)
+---
+
+## 6️⃣ Controller (logique métier)
+
+### Exemple user_controller.py :
+
+- Reçoit les données de la requête
+
+- Valide les champs
+
+- Appelle le modèle
+
+- Retourne (response, status)
+
 
 Exemple :
 
-return {"message": "User created"}, 201
+    return {"message": "User created"}, 201
+
 
 Le controller :
 
-N’exécute pas de SQL directement
+- N’exécute pas de SQL directement
 
-N’envoie pas de headers HTTP
+- N’envoie pas de headers HTTP
 
-7️⃣ main.py – Router et flux complet
+
+---
+
+
+## 7️⃣ main.py – Router et flux complet
 
 Exemple do_POST() :
 
-if self.path == "/api/register":
-    response, status = UserController.register(body)
-    return self._send_json(response, status)
+    if self.path == "/api/register":
+        response, status = UserController.register(body)
+        return self._send_json(response, status)
 
-Flux complet MVC manuel :
 
-Client → main.py → Controller → Modèle → MySQL
-        → Controller → _send_json() → Client
 
-Points importants :
+### Flux complet MVC manuel :
 
-do_GET, do_POST, do_PUT, do_DELETE fonctionnent de la même manière
+    Client → main.py → Controller → Modèle → MySQL
+            → Controller → _send_json() → Client
 
-La barre / initiale est obligatoire
 
-_send_json() évite les erreurs de socket
 
-8️⃣ CRUD des Artworks
-Méthode	Route	Action
-GET	/api/artworks	Récupérer tous les artworks
-POST	/api/artworks	Créer un artwork
-PUT	/api/artworks/{id}	Mettre à jour un artwork
-DELETE	/api/artworks/{id}	Supprimer un artwork
+### Points importants :
+
+-  do_GET, do_POST, do_PUT, do_DELETE fonctionnent de la même manière
+
+- La barre / initiale est obligatoire
+
+- _send_json() évite les erreurs de socket
+
+
+---
+
+
+## 8️⃣ CRUD des Artworks
+
+    Méthode	Route	Action
+    GET	/api/artworks	Récupérer tous les artworks
+    POST	/api/artworks	Créer un artwork
+    PUT	/api/artworks/{id}	Mettre à jour un artwork
+    DELETE	/api/artworks/{id}	Supprimer un artwork
+
+
 
 Notes :
 
-do_PUT et do_DELETE valident que l’ID est numérique → sinon 400
+- do_PUT et do_DELETE valident que l’ID est numérique → sinon 400
 
-do_DELETE est correctement indenté au même niveau que les autres méthodes
+- do_DELETE est correctement indenté au même niveau que les autres méthodes
 
-9️⃣ Base de données
 
-Défini dans database.sql :
+---
 
-users
+## 9️⃣ Base de données
 
-artworks
+### Défini dans database.sql :
 
-biography (à implémenter)
+- users
 
-messages (à implémenter)
+- artworks
 
-db_start.py :
+- biography (à implémenter)
+
+- messages (à implémenter)
+
+- db_start.py :
 
 Crée automatiquement la base et les tables
 
 ⚠️ Ne jamais mettre CREATE TABLE dans un modèle.
 Le modèle ne fait que des opérations CRUD.
 
-🔟 Sécurité basique
+
+---
+
+## 🔟 Sécurité basique
 
 Hash des mots de passe :
 
-hashlib.sha256(password.encode()).hexdigest()
+    hashlib.sha256(password.encode()).hexdigest()
 
 Aucun mot de passe en texte clair
 
 Niveau académique correct
 
-1️⃣1️⃣ Testing
+
+--- 
+
+## 1️⃣1️⃣ Testing
 
 ⚠️ Ne pas attendre du HTML dans le navigateur.
 C’est une API JSON.
 
 Utiliser :
 
-curl http://localhost:8000/api/artworks
-curl -X POST http://localhost:8000/api/register \
--d '{"username":"juan","email":"juan@example.com","password":"1234"}' \
--H "Content-Type: application/json"
+    curl http://localhost:8000/api/artworks
+    curl -X POST http://localhost:8000/api/register \
+    -d '{"username":"juan","email":"juan@example.com","password":"1234"}' \
+    -H "Content-Type: application/json"
+
+
 
 Debug utile :
 
-print("GET reçu :", repr(self.path))
+    print("GET reçu :", repr(self.path))
 
 _send_json() évite les erreurs de connexion interrompue.
+
+
+---
 
 🧠 État actuel du projet
 
