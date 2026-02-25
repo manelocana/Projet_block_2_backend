@@ -1,41 +1,49 @@
 
 
-📘 BLOC 2 – Backend sans framework (Python + MySQL) – Guide définitive
+📘 BLOC 2 – Backend sans framework (Python + MySQL)
 🎯 Objectif
+
 
 Développer un backend from scratch :
 
-Sans framework (pas de Flask)
+    Sans framework (pas de Flask)
 
-Architecture MVC manuelle
+    Architecture MVC manuelle
 
-Programmation orientée objet (POO)
+    Programmation orientée objet (POO)
 
-Utilisation de MySQL
+    Utilisation de MySQL
 
-Exposition d’endpoints REST
+    Exposition d’endpoints REST
 
-Gestion des utilisateurs, rôles et artworks
+    Gestion des utilisateurs, rôles et artworks
 
 ⚠️ Le backend est une API JSON, pas une application web HTML.
 Le navigateur affichera du JSON… ou une 404 si la route n’existe pas.
 
+
+
 1️⃣ Architecture générale
+
 Structure du projet
-backend/
-│
-├── main.py              → Serveur HTTP et routing
-├── db_config.py         → Connexion MySQL
-│
-├── models/              → Logique base de données
-│   ├── user.py
-│   ├── artwork.py
-│
-├── controllers/         → Logique métier
-│   ├── user_controller.py
-│   ├── artwork_controller.py
-│
-└── database.sql         → Script de création des tables
+
+    backend/
+    │
+    ├── main.py              → Serveur HTTP et routing
+    ├── db_config.py         → Connexion MySQL
+    │
+    ├── models/              → Logique base de données
+    │   ├── user.py
+    │   ├── artwork.py
+    │
+    ├── controllers/         → Logique métier
+    │   ├── user_controller.py
+    │   ├── artwork_controller.py
+    │
+    └── database.sql         → Script de création des tables
+
+
+
 Responsabilités
 
 main.py → Reçoit les requêtes HTTP et gère le routing manuel
