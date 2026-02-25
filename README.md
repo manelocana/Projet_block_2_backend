@@ -1,31 +1,34 @@
 
 
-📘 BLOC 2 – Backend sans framework (Python + MySQL)
-🎯 Objectif
+# 📘 BLOC 2 – Backend sans framework (Python + MySQL)
 
 
-Développer un backend from scratch :
 
-    Sans framework (pas de Flask)
+## 🎯 Objectif
 
-    Architecture MVC manuelle
+### Développer un backend **from scratch** :
 
-    Programmation orientée objet (POO)
+- Sans framework (pas de Flask)
 
-    Utilisation de MySQL
+- Architecture MVC manuelle
 
-    Exposition d’endpoints REST
+- Programmation orientée objet (POO)
 
-    Gestion des utilisateurs, rôles et artworks
+- Utilisation de MySQL
+
+- Exposition d’endpoints REST
+
+- Gestion des utilisateurs, rôles et artworks
+
 
 ⚠️ Le backend est une API JSON, pas une application web HTML.
 Le navigateur affichera du JSON… ou une 404 si la route n’existe pas.
 
+---
 
+## 1️⃣ Architecture générale
 
-1️⃣ Architecture générale
-
-Structure du projet
+### Structure du projet
 
     backend/
     │
@@ -43,88 +46,111 @@ Structure du projet
     └── database.sql         → Script de création des tables
 
 
+---
 
-Responsabilités
+### Responsabilités
 
-main.py → Reçoit les requêtes HTTP et gère le routing manuel
+- main.py → Reçoit les requêtes HTTP et gère le routing manuel
 
-controllers/ → Valide les données et appelle les modèles
+- controllers/ → Valide les données et appelle les modèles
 
-models/ → Exécute les requêtes SQL
+- models/ → Exécute les requêtes SQL
 
-database.sql → Définit la structure de la base de données
+- database.sql → Définit la structure de la base de données
 
-Architecture MVC :
 
-Modèle → Controller → Vue (JSON)
+### Architecture MVC :
+
+    Modèle → Controller → Vue (JSON)
 
 La fonction _send_json() joue le rôle de “vue”.
 
-2️⃣ Serveur HTTP manuel
+
+---
+
+## 2️⃣ Serveur HTTP manuel
 
 Nous utilisons :
 
-from http.server import HTTPServer, BaseHTTPRequestHandler
+    from http.server import HTTPServer, BaseHTTPRequestHandler
+
+
 
 Méthodes implémentées :
 
-do_GET()
+- do_GET()
 
-do_POST()
+- do_POST()
 
-do_PUT()
+- do_PUT()
 
-do_DELETE()
+- do_DELETE()
+
 
 Routing manuel :
 
-if self.path.startswith("/api/artworks"):
+    if self.path.startswith("/api/artworks"):
 
 ⚠️ Toujours utiliser la barre initiale /.
 Sans elle, la route ne correspond pas → 404.
 
-3️⃣ _send_json() – Envoi de réponse
 
-Fonction dans le Handler :
+---
 
-def _send_json(self, payload, status=200):
-    body = json.dumps(payload, default=str).encode("utf-8")
-    self.send_response(status)
-    self.send_header("Content-Type", "application/json; charset=utf-8")
-    self.send_header("Content-Length", str(len(body)))
-    self.send_header("Access-Control-Allow-Origin", "*")
-    self.end_headers()
-    self.wfile.write(body)
 
-Responsabilités :
+## 3️⃣ _send_json() – Envoi de réponse
 
-Sérialisation JSON
+### Fonction dans le Handler :
 
-Envoi des headers corrects
+    def _send_json(self, payload, status=200):
+        body = json.dumps(payload, default=str).encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(body)
 
-Prévention des erreurs AttributeError
 
-4️⃣ _parse_body() – Lecture du body JSON
 
-Fonction utilisée pour POST et PUT :
+### Responsabilités :
 
-def _parse_body(self):
-    content_length = int(self.headers.get("Content-Length", 0))
-    if content_length > 0:
-        raw_body = self.rfile.read(content_length)
-        try:
-            return json.loads(raw_body)
-        except json.JSONDecodeError:
-            return None
-    return {}
+- Sérialisation JSON
+
+- Envoi des headers corrects
+
+- Prévention des erreurs AttributeError
+
+
+---
+
+
+## 4️⃣ _parse_body() – Lecture du body JSON
+
+### Fonction utilisée pour POST et PUT :
+
+    def _parse_body(self):
+        content_length = int(self.headers.get("Content-Length", 0))
+        if content_length > 0:
+            raw_body = self.rfile.read(content_length)
+            try:
+                return json.loads(raw_body)
+            except json.JSONDecodeError:
+                return None
+        return {}
+
+
 
 Permet :
 
-D’éviter la duplication de code
+- D’éviter la duplication de code
 
-De gérer les JSON invalides proprement
+- De gérer les JSON invalides proprement
 
-5️⃣ Modèle (POO)
+
+---
+
+## 5️⃣ Modèle (POO)
 
 Chaque entité possède sa classe :
 
