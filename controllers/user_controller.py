@@ -73,3 +73,21 @@ class UserController:
 
         users = User.get_all_users()
         return users, 200
+    
+
+
+    @staticmethod
+    def update(user_id, body):
+
+        if not body:
+            return {"error": "Body vacío"}, 400
+
+        username = body.get("username")
+        email = body.get("email")
+
+        if not username or not email:
+            return {"error": "Faltan datos"}, 400
+
+        User.update_user(user_id, username, email)
+
+        return {"message": "User updated"}, 200

@@ -74,3 +74,17 @@ class User:
         if data:
             return User(**data)
         return None
+    
+
+
+    @staticmethod
+    def update_user(user_id, username, email):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(""" UPDATE users SET username = %s, email = %s WHERE id = %s """, (username, email, user_id))
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()

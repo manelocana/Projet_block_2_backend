@@ -129,6 +129,15 @@ class Handler(BaseHTTPRequestHandler):
             role = self.headers.get("Role")
             response, status = BiographyController.update(body, role)
             return self._send_json(response, status)
+        
+
+        if self.path.startswith("/api/users/"):
+            try:
+                user_id = int(self.path.split("/")[-1])
+            except ValueError:
+                return self._send_json({"error": "ID inválido"}, 400)
+            response, status = UserController.update(user_id, body)
+            return self._send_json(response, status)
 
 
         self.send_response(404)
