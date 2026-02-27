@@ -321,7 +321,7 @@ _send_json() évite les erreurs de connexion interrompue.
 ---
 
 
-1️⃣2️⃣ Différence entre dict et objet
+## 1️⃣2️⃣ Différence entre dict et objet
 
 Dict : données sous forme clé → valeur, indexable par data["username"]
 
@@ -375,7 +375,7 @@ Ceci s’applique aux utilisateurs et aux œuvres, selon le niveau d’autorisat
 ---
 
 
-##🧠 État actuel du projet
+## 🧠 État actuel du projet
 
 - ✔ Backend sans framework
 - ✔ MVC manuel fonctionnel
