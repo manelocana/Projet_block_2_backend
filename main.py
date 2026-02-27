@@ -5,6 +5,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from controllers.user_controller import UserController
 from controllers.artwork_controller import ArtworkController
 from controllers.biography_controller import BiographyController
+from controllers.message_controller import MessageController
 
 
 
@@ -60,6 +61,12 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/api/artworks":
             response, status = ArtworkController.create(body)
             return self._send_json(response, status)
+        
+
+        if self.path == "/api/contact":
+            response, status = MessageController.create(body)
+            return self._send_json(response, status)
+
 
         self.send_response(404)
         self.end_headers()
@@ -92,6 +99,12 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/api/biography":
             response, status = BiographyController.get()
             return self._send_json(response, status)
+        
+        if self.path == "/api/messages":
+            role = self.headers.get("Role")
+            response, status = MessageController.get_all(role)
+            return self._send_json(response, status)
+
 
         self.send_response(404)
         self.end_headers()
