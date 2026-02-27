@@ -1,7 +1,6 @@
 
 
 
-import json
 from models.user import User
 import hashlib
 
@@ -11,14 +10,14 @@ import hashlib
 class UserController:
 
     @staticmethod
-    def register(request_handler):
-        length = int(request_handler.headers.get("Content-Length", 0))
-        raw = request_handler.rfile.read(length)
-        data = json.loads(raw.decode("utf-8"))
+    def register(body):
 
-        username = data.get("username")
-        email = data.get("email")
-        password = data.get("password")
+        if not body:
+            return {"error":"body none"}
+
+        username = body.get("username")
+        email = body.get("email")
+        password = body.get("password")
 
         if not username or not email or not password:
             return {"error": "Missing fields"}, 400

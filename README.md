@@ -270,9 +270,9 @@ Notes :
 
 - artworks
 
-- biography (à implémenter)
+- biography 
 
-- messages (à implémenter)
+- messages 
 
 - db_start.py :
 
@@ -320,20 +320,18 @@ _send_json() évite les erreurs de connexion interrompue.
 
 ---
 
-🧠 État actuel du projet
 
-✔ Backend sans framework
-✔ MVC manuel fonctionnel
-✔ _send_json() et _parse_body()
-✔ CRUD complet des artworks
-✔ Enregistrement / login basique
-✔ Connexion MySQL modulaire
-✔ db_start.py et database.sql opérationnels
-✔ Tests avec Postman / curl
-✔ Erreurs classiques corrigées (/, indentation, AttributeError)
+1️⃣2️⃣ Différence entre dict et objet
+
+Dict : données sous forme clé → valeur, indexable par data["username"]
+
+Objet : instance d’une classe, accessible par attributs user.username
+
+Flux utilisé :
+Client envoie JSON → dict → converti en Objet (User / Artwork) → SQL → résultat → dict → JSON → Client
 
 
-
+---
 
 
 ## 🔑 Rôles et contrôle d’accès
@@ -372,3 +370,19 @@ Si le header n’est pas envoyé ou si le rôle ne correspond pas → 403 Non au
 Aucune session ni token n’est utilisé, seulement les headers HTTP (conforme aux exigences du bloc 2).
 
 Ceci s’applique aux utilisateurs et aux œuvres, selon le niveau d’autorisation.
+
+
+---
+
+
+##🧠 État actuel du projet
+
+- ✔ Backend sans framework
+- ✔ MVC manuel fonctionnel
+- ✔ _send_json() et _parse_body()
+- ✔ CRUD complet des artworks
+- ✔ CRUD et login/register utilisateurs
+- ✔ Connexion MySQL modulaire
+- ✔ db_start.py et database.sql opérationnels
+- ✔ Tests avec Thunder Client / curl
+- ✔ Gestion des rôles et protection de routes

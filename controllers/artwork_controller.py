@@ -17,11 +17,11 @@ class ArtworkController:
 
 
     @staticmethod
-    def create(data):
+    def create(body):
 
-        title = data.get("title")
-        description = data.get("description")
-        category = data.get("category")
+        title = body.get("title")
+        description = body.get("description")
+        category = body.get("category")
 
         if not title:
             return {"error": "Title required"}, 400
@@ -33,11 +33,11 @@ class ArtworkController:
 
 
     @staticmethod
-    def update(data, artwork_id):
+    def update(body, artwork_id):
 
-        title = data.get("title")
-        description = data.get("description")
-        category = data.get("category")
+        title = body.get("title")
+        description = body.get("description")
+        category = body.get("category")
 
         Artwork.update(artwork_id, title, description, category)
 
