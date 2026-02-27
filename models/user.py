@@ -46,6 +46,21 @@ class User:
 
 
     @staticmethod
+    def get_all_users():
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("SELECT id, username, email, role, created_at FROM users ORDER BY id DESC")
+        rows = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return rows
+
+
+
+    @staticmethod
     def find_by_email(email):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)

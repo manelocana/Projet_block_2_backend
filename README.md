@@ -331,3 +331,44 @@ _send_json() évite les erreurs de connexion interrompue.
 ✔ db_start.py et database.sql opérationnels
 ✔ Tests avec Postman / curl
 ✔ Erreurs classiques corrigées (/, indentation, AttributeError)
+
+
+
+
+
+## 🔑 Rôles et contrôle d’accès
+
+Chaque utilisateur a un rôle : admin ou artist.
+
+Les rôles déterminent quelles routes l’utilisateur peut utiliser :
+
+```
+Route	Méthode	Rôle requis	Description
+/api/users	GET	admin	Obtenir la liste des utilisateurs
+/api/artworks	POST	admin/artist	Créer une nouvelle œuvre
+/api/artworks/{id}	PUT	admin/artist	Mettre à jour une œuvre existante
+/api/artworks/{id}	DELETE	admin	Supprimer une œuvre
+```
+
+Comment le rôle est vérifié :
+
+Le client envoie un header HTTP nommé Role avec la valeur de son rôle :
+
+- Key: Role
+- Value: admin
+
+Dans main.py, le header est lu :
+
+    role = self.headers.get("Role")
+
+Avant d’appeler le controller, le rôle est transmis et le controller décide d’autoriser ou de renvoyer une erreur 403 :
+
+    response, status = UserController.get_all_users(role)
+
+Remarques importantes :
+
+Si le header n’est pas envoyé ou si le rôle ne correspond pas → 403 Non autorisé.
+
+Aucune session ni token n’est utilisé, seulement les headers HTTP (conforme aux exigences du bloc 2).
+
+Ceci s’applique aux utilisateurs et aux œuvres, selon le niveau d’autorisation.

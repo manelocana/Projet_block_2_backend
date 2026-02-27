@@ -34,6 +34,14 @@ class Handler(BaseHTTPRequestHandler):
 
 
 
+    def _is_admin(self):
+        print("HEADERS COMPLETOS:", self.headers)
+        role = self.headers.get("Role")
+        print("ROLE HEADER RECIBIDO:", role)
+        return role == "admin"
+
+
+
     def do_POST(self):
 
         body = self._parse_body()
@@ -64,6 +72,15 @@ class Handler(BaseHTTPRequestHandler):
 
         if self.path.startswith("/api/artworks"):
             response, status = ArtworkController.get_all()
+            return self._send_json(response, status)
+        
+        if self.path == "/api/users":
+            role = self.headers.get("Role")
+            print("ROLE HEADER RECIBIDO:", role)
+
+            if not self._is_admin():
+                return self._send_json({"error": "No autorizado"}, 403)
+            response, status = UserController.get_all_users(role)
             return self._send_json(response, status)
 
         self.send_response(404)

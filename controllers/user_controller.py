@@ -62,3 +62,14 @@ class UserController:
                 "role": user.role
             }
         }, 200
+    
+
+
+    @staticmethod
+    def get_all_users(role):
+
+        if role != "admin":
+            return {"error": "No autorizado"}, 403
+
+        users = User.get_all_users()
+        return users, 200
