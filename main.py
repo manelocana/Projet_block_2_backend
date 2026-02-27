@@ -4,6 +4,7 @@ import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from controllers.user_controller import UserController
 from controllers.artwork_controller import ArtworkController
+from controllers.biography_controller import BiographyController
 
 
 
@@ -54,6 +55,8 @@ class Handler(BaseHTTPRequestHandler):
             response, status = UserController.login(body)
             return self._send_json(response, status)
 
+
+
         if self.path == "/api/artworks":
             response, status = ArtworkController.create(body)
             return self._send_json(response, status)
@@ -70,10 +73,12 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == "/":
             return self._send_json({"message": "hola soy el server a pelo"}, 200)
 
+
         if self.path.startswith("/api/artworks"):
             response, status = ArtworkController.get_all()
             return self._send_json(response, status)
         
+
         if self.path == "/api/users":
             role = self.headers.get("Role")
             print("ROLE HEADER RECIBIDO:", role)
@@ -81,6 +86,11 @@ class Handler(BaseHTTPRequestHandler):
             if not self._is_admin():
                 return self._send_json({"error": "No autorizado"}, 403)
             response, status = UserController.get_all_users(role)
+            return self._send_json(response, status)
+        
+
+        if self.path == "/api/biography":
+            response, status = BiographyController.get()
             return self._send_json(response, status)
 
         self.send_response(404)
@@ -97,9 +107,16 @@ class Handler(BaseHTTPRequestHandler):
                 artwork_id = int(self.path.split("/")[-1])
             except ValueError:
                 return self._send_json({"error": "ID inválido"}, 400)
-
             response, status = ArtworkController.update(body, artwork_id)
             return self._send_json(response, status)
+        
+
+
+        if self.path == "/api/biography":
+            role = self.headers.get("Role")
+            response, status = BiographyController.update(body, role)
+            return self._send_json(response, status)
+
 
         self.send_response(404)
         self.end_headers()

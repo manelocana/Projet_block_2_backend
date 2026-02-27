@@ -24,7 +24,8 @@ CREATE TABLE artworks (
 
 CREATE TABLE biography (
     id INT PRIMARY KEY,
-    content TEXT
+    content TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 
