@@ -1,388 +1,307 @@
+Backend Python from Scratch (Block 2)
+# 🟦 BLOCK 2 — API Backend en Python pur (sans framework)
 
+## 📌 Introduction
 
-# 📘 BLOC 2 – Backend sans framework (Python + MySQL)
+Ce projet consiste en la réalisation d’une API backend complète développée en **Python pur**, sans l’utilisation de frameworks tels que Flask ou Django.
 
+L’objectif principal est de comprendre en profondeur le fonctionnement interne d’un backend web, notamment :
+- la gestion des requêtes HTTP,
+- le routage manuel,
+- la séparation des responsabilités,
+- l’accès à une base de données relationnelle,
+- la gestion des réponses JSON.
 
-
-## 🎯 Objectif
-
-### Développer un backend **from scratch** :
-
-- Sans framework (pas de Flask)
-
-- Architecture MVC manuelle
-
-- Programmation orientée objet (POO)
-
-- Utilisation de MySQL
-
-- Exposition d’endpoints REST
-
-- Gestion des utilisateurs, rôles et artworks
-
-
-⚠️ Le backend est une API JSON, pas une application web HTML.
-Le navigateur affichera du JSON… ou une 404 si la route n’existe pas.
-
----
-
-## 1️⃣ Architecture générale
-
-### Structure du projet
-
-    backend/
-    │
-    ├── main.py              → Serveur HTTP et routing
-    ├── db_config.py         → Connexion MySQL
-    │
-    ├── models/              → Logique base de données
-    │   ├── user.py
-    │   ├── artwork.py
-    │
-    ├── controllers/         → Logique métier
-    │   ├── user_controller.py
-    │   ├── artwork_controller.py
-    │
-    └── database.sql         → Script de création des tables
-
-
----
-
-### Responsabilités
-
-- main.py → Reçoit les requêtes HTTP et gère le routing manuel
-
-- controllers/ → Valide les données et appelle les modèles
-
-- models/ → Exécute les requêtes SQL
-
-- database.sql → Définit la structure de la base de données
-
-
-### Architecture MVC :
-
-    Modèle → Controller → Vue (JSON)
-
-La fonction _send_json() joue le rôle de “vue”.
-
-
----
-
-## 2️⃣ Serveur HTTP manuel
-
-Nous utilisons :
-
-    from http.server import HTTPServer, BaseHTTPRequestHandler
-
-
-
-Méthodes implémentées :
-
-- do_GET()
-
-- do_POST()
-
-- do_PUT()
-
-- do_DELETE()
-
-
-Routing manuel :
-
-    if self.path.startswith("/api/artworks"):
-
-⚠️ Toujours utiliser la barre initiale /.
-Sans elle, la route ne correspond pas → 404.
+Ce projet reproduit de manière simplifiée le comportement interne d’un framework web.
 
 
 ---
 
 
-## 3️⃣ _send_json() – Envoi de réponse
+## 🚀 Lancement du projet
 
-### Fonction dans le Handler :
+### ▶️ Démarrer le serveur
 
-    def _send_json(self, payload, status=200):
-        body = json.dumps(payload, default=str).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", str(len(body)))
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.end_headers()
-        self.wfile.write(body)
-
-
-
-### Responsabilités :
-
-- Sérialisation JSON
-
-- Envoi des headers corrects
-
-- Prévention des erreurs AttributeError
+<!-- bash -->
+    python main.py
 
 
 ---
 
 
-## 4️⃣ _parse_body() – Lecture du body JSON
+## 🌐 Accès à l’API
 
-### Fonction utilisée pour POST et PUT :
+L’API est disponible en local à l’adresse :
 
-    def _parse_body(self):
-        content_length = int(self.headers.get("Content-Length", 0))
-        if content_length > 0:
-            raw_body = self.rfile.read(content_length)
-            try:
-                return json.loads(raw_body)
-            except json.JSONDecodeError:
-                return None
-        return {}
+    http://localhost:8000
 
 
-
-Permet :
-
-- D’éviter la duplication de code
-
-- De gérer les JSON invalides proprement
-
-
----
-
-## 5️⃣ Modèle (POO)
-
-### Chaque entité possède sa classe :
-
-- User
-
-- Artwork
-
-- Méthodes typiques :
-
-- create()
-
-- find_by_email()
-
-- update()
-
-- delete()
-
-
-
-### Le modèle :
-
-- Interagit uniquement avec MySQL
-
-- Ne connaît rien du HTTP
-
-
-### Séparation claire :
-
-    Modèle = Base de données
-    Controller = Logique métier
-    main.py = HTTP
-
-
----
-
-## 6️⃣ Controller (logique métier)
-
-### Exemple user_controller.py :
-
-- Reçoit les données de la requête
-
-- Valide les champs
-
-- Appelle le modèle
-
-- Retourne (response, status)
-
-
-Exemple :
-
-    return {"message": "User created"}, 201
-
-
-Le controller :
-
-- N’exécute pas de SQL directement
-
-- N’envoie pas de headers HTTP
+Le serveur utilise le module natif http.server de Python.
 
 
 ---
 
 
-## 7️⃣ main.py – Router et flux complet
+## 🧱 Architecture générale
 
-Exemple do_POST() :
+Le projet suit une architecture inspirée du modèle MVC simplifié :
 
-    if self.path == "/api/register":
-        response, status = UserController.register(body)
-        return self._send_json(response, status)
-
-
-
-### Flux complet MVC manuel :
-
-    Client → main.py → Controller → Modèle → MySQL
-            → Controller → _send_json() → Client
-
-
-
-### Points importants :
-
--  do_GET, do_POST, do_PUT, do_DELETE fonctionnent de la même manière
-
-- La barre / initiale est obligatoire
-
-- _send_json() évite les erreurs de socket
+Requête HTTP → Handler → Controller → Model → Base de données → Réponse JSON
 
 
 ---
 
 
-## 8️⃣ CRUD des Artworks
 
-    Méthode	Route	Action
-    GET	/api/artworks	Récupérer tous les artworks
-    POST	/api/artworks	Créer un artwork
-    PUT	/api/artworks/{id}	Mettre à jour un artwork
-    DELETE	/api/artworks/{id}	Supprimer un artwork
+## 📁 Structure du projet
 
-
-
-Notes :
-
-- do_PUT et do_DELETE valident que l’ID est numérique → sinon 400
-
-- do_DELETE est correctement indenté au même niveau que les autres méthodes
+project/
+│
+├── main.py                  # Point d’entrée du serveur HTTP
+├── db_config.py             # Configuration de la connexion base de données
+│
+├── controllers/             # Logique métier (business logic)
+│   ├── user_controller.py
+│   ├── artwork_controller.py
+│   ├── biography_controller.py
+│   └── message_controller.py
+│
+├── models/                  # Accès et manipulation de la base de données
+│   ├── user.py
+│   ├── artwork.py
+│   ├── biography.py
+│   └── message.py
+│
+├── tests/                   # Tests unitaires avec pytest
+│
+└── README.md
 
 
 ---
 
-## 9️⃣ Base de données
 
-### Défini dans database.sql :
+## ⚙️ Technologies utilisées
+
+- Python 3.11
+- http.server (BaseHTTPRequestHandler)
+- JSON (format d’échange de données)
+- MySQL / SQLite (base de données relationnelle)
+- Pytest (tests unitaires)
+- Thunder Client (tests API)
+
+
+---
+
+
+## 🔄 Fonctionnement global
+
+Chaque requête HTTP suit le flux suivant :
+
+### Client → Handler → Controller → Model → Base de données → Response
+
+
+## Description des étapes :
+
+### 1. Handler
+
+Le Handler hérite de BaseHTTPRequestHandler.
+
+Il est responsable de :
+
+- recevoir les requêtes HTTP,
+- analyser la route (URL),
+- extraire les données (body, headers),
+- rediriger vers le bon contrôleur.
+
+Il gère les méthodes :
+
+- GET
+- POST
+- PUT
+- DELETE
+
+
+### 2. Controllers
+
+Les contrôleurs contiennent la logique métier.
+
+Ils sont responsables de :
+
+- valider les données reçues,
+- appliquer les règles métier,
+- appeler les modèles,
+- formater la réponse.
+
+Chaque entité possède son contrôleur :
+
+- UserController
+- ArtworkController
+- BiographyController
+- MessageController
+
+
+### 3. Models
+
+Les modèles gèrent directement l’accès à la base de données.
+
+Ils contiennent les requêtes SQL :
+
+- SELECT
+- INSERT
+- UPDATE
+- DELETE
+
+Chaque modèle correspond à une table de la base de données.
+
+
+---
+
+
+## 📦 Système de réponse
+
+Une classe Response a été créée pour centraliser la gestion des réponses HTTP.
+
+Elle permet :
+
+- la conversion des dictionnaires Python en JSON,
+- l’ajout des headers HTTP,
+- la gestion des codes de statut (200, 400, 404, etc.),
+- la gestion du CORS.
+
+
+---
+
+
+
+## 🌐 Endpoints de l’API
+
+
+🔐 Authentification
+| Méthode | Route         | Description               |
+| ------- | ------------- | ------------------------- |
+| POST    | /api/register | Création d’un utilisateur |
+| POST    | /api/login    | Connexion utilisateur     |
+
+
+🎨 Artworks
+| Méthode | Route             | Description                 |
+| ------- | ----------------- | --------------------------- |
+| GET     | /api/artworks     | Récupérer tous les artworks |
+| POST    | /api/artworks     | Créer un artwork            |
+| PUT     | /api/artworks/:id | Modifier un artwork         |
+| DELETE  | /api/artworks/:id | Supprimer un artwork        |
+
+
+👤 Utilisateurs
+| Méthode | Route      | Description                               |
+| ------- | ---------- | ----------------------------------------- |
+| GET     | /api/users | Liste des utilisateurs (admin uniquement) |
+
+
+📖 Biographie
+| Méthode | Route          | Description                 |
+| ------- | -------------- | --------------------------- |
+| GET     | /api/biography | Récupérer la biographie     |
+| PUT     | /api/biography | Mettre à jour la biographie |
+
+
+💬 Messages
+| Méthode | Route         | Description                          |
+| ------- | ------------- | ------------------------------------ |
+| POST    | /api/contact  | Envoyer un message                   |
+| GET     | /api/messages | Voir les messages (admin uniquement) |
+
+
+---
+
+
+
+## 🔐 Authentification et autorisation
+
+Le système de sécurité est simplifié et repose sur les headers HTTP :
+
+Headers utilisés :
+- Role: admin
+- User-Id: 1
+- Logique :
+- Les routes protégées vérifient le rôle admin
+
+Certaines routes utilisent User-Id pour identifier l’utilisateur
+
+
+---
+
+
+## 🗄️ Base de données
+
+La base de données est relationnelle et contient les tables suivantes :
 
 - users
-
 - artworks
+- biography
+- messages
 
-- biography 
+Chaque modèle contient les opérations CRUD :
 
-- messages 
+- Create
+- Read
+- Update
+- Delete
 
-- db_start.py :
-
-Crée automatiquement la base et les tables
-
-⚠️ Ne jamais mettre CREATE TABLE dans un modèle.
-Le modèle ne fait que des opérations CRUD.
-
-
----
-
-## 🔟 Sécurité basique
-
-Hash des mots de passe :
-
-    hashlib.sha256(password.encode()).hexdigest()
-
-Aucun mot de passe en texte clair
-
-Niveau académique correct
-
-
---- 
-
-## 1️⃣1️⃣ Testing
-
-⚠️ Ne pas attendre du HTML dans le navigateur.
-C’est une API JSON.
-
-Utiliser :
-
-    curl http://localhost:8000/api/artworks
-    curl -X POST http://localhost:8000/api/register \
-    -d '{"username":"juan","email":"juan@example.com","password":"1234"}' \
-    -H "Content-Type: application/json"
-
-
-
-Debug utile :
-
-    print("GET reçu :", repr(self.path))
-
-_send_json() évite les erreurs de connexion interrompue.
 
 
 ---
 
 
-## 1️⃣2️⃣ Différence entre dict et objet
+## 🧪 Tests
 
-Dict : données sous forme clé → valeur, indexable par data["username"]
+Les tests ont été réalisés avec pytest.
 
-Objet : instance d’une classe, accessible par attributs user.username
+Ils permettent de vérifier :
 
-Flux utilisé :
-Client envoie JSON → dict → converti en Objet (User / Artwork) → SQL → résultat → dict → JSON → Client
+- la validation des données,
+- la logique des contrôleurs,
+- le comportement des routes.
 
-
----
-
-
-## 🔑 Rôles et contrôle d’accès
-
-Chaque utilisateur a un rôle : admin ou artist.
-
-Les rôles déterminent quelles routes l’utilisateur peut utiliser :
-
-```
-Route	Méthode	Rôle requis	Description
-/api/users	GET	admin	Obtenir la liste des utilisateurs
-/api/artworks	POST	admin/artist	Créer une nouvelle œuvre
-/api/artworks/{id}	PUT	admin/artist	Mettre à jour une œuvre existante
-/api/artworks/{id}	DELETE	admin	Supprimer une œuvre
-```
-
-Comment le rôle est vérifié :
-
-Le client envoie un header HTTP nommé Role avec la valeur de son rôle :
-
-- Key: Role
-- Value: admin
-
-Dans main.py, le header est lu :
-
-    role = self.headers.get("Role")
-
-Avant d’appeler le controller, le rôle est transmis et le controller décide d’autoriser ou de renvoyer une erreur 403 :
-
-    response, status = UserController.get_all_users(role)
-
-Remarques importantes :
-
-Si le header n’est pas envoyé ou si le rôle ne correspond pas → 403 Non autorisé.
-
-Aucune session ni token n’est utilisé, seulement les headers HTTP (conforme aux exigences du bloc 2).
-
-Ceci s’applique aux utilisateurs et aux œuvres, selon le niveau d’autorisation.
+Les tests utilisent également des mocks afin d’éviter l’accès réel à la base de données.
 
 
 ---
 
 
-## 🧠 État actuel du projet
+## 🔧 Gestion des erreurs
 
-- ✔ Backend sans framework
-- ✔ MVC manuel fonctionnel
-- ✔ _send_json() et _parse_body()
-- ✔ CRUD complet des artworks
-- ✔ CRUD et login/register utilisateurs
-- ✔ Connexion MySQL modulaire
-- ✔ db_start.py et database.sql opérationnels
-- ✔ Tests avec Thunder Client / curl
-- ✔ Gestion des rôles et protection de routes
+L’API gère plusieurs types d’erreurs :
+
+- Données manquantes (400)
+- Accès non autorisé (403)
+- Ressource introuvable (404)
+- Erreurs de validation
+
+Toutes les erreurs sont retournées au format JSON.
+
+
+---
+
+
+## 🧠 Choix techniques
+
+Ce projet a été réalisé sans framework afin de :
+
+- comprendre le fonctionnement interne d’un serveur HTTP,
+- maîtriser la gestion des requêtes sans abstraction,
+- comprendre la séparation MVC,
+- apprendre le fonctionnement réel d’un backend.
+
+
+---
+
+
+
+## 🎯 Conclusion
+
+Ce projet démontre la création complète d’une API backend en Python pur.
+
+Il reproduit le fonctionnement interne des frameworks modernes tout en gardant un contrôle total sur chaque couche de l’application.
+
+Ce travail permet de comprendre en profondeur les concepts fondamentaux du développement backend.

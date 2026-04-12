@@ -1,20 +1,26 @@
 
 
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from controllers.artwork_controller import ArtworkController
 
 
 
 
-def test_create_without_title():
-    body = {
-        "description": "desc",
-        "category": "painting"
-    }
+def test_create_artwork_success(monkeypatch):
 
-    response, status = ArtworkController.create(body)
+    class FakeArtwork:
+        @staticmethod
+        def create(user_id, title, description, category):
+            return {"id": 1}
 
-    assert status == 400
+    monkeypatch.setattr("controllers.artwork_controller.Artwork", FakeArtwork)
+
+    response, status = ArtworkController.create({
+        "user_id": 1,
+        "title": "Art",
+        "description": "Desc",
+        "category": "digital"
+    })
+
+    assert status == 201
+    assert response["message"] == "Artwork created"

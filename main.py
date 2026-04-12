@@ -123,7 +123,7 @@ class Handler(BaseHTTPRequestHandler):
             if not self.is_admin():
                 return res.json({"error": "Non autorisé"}, 403)
 
-            response, status = UserController.get_all_users(self.headers.get("Role"))
+            response, status = UserController.get_all_users()
             return res.json(response, status)
 
 
