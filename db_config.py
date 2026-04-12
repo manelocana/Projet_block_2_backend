@@ -1,7 +1,8 @@
 
 
 import os
-import mysql.connector
+"""le marque comme non reconnu, mais il est installé le paquet (pip freeze), et tout marche ok"""
+import mysql.connector 
 from dotenv import load_dotenv
 
 

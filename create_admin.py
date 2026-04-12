@@ -17,7 +17,8 @@ cursor = conn.cursor()
 cursor.execute("""
 INSERT INTO users (username, email, password, role)
 VALUES (%s, %s, %s, %s)
-""", ("admin", "admin@example.com", hashed, "admin"))
+""", ("admin", "admin@example.com", hashed, "admin")
+)
 
 conn.commit()
 cursor.close()

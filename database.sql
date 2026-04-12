@@ -14,10 +14,14 @@ CREATE TABLE users (
 
 CREATE TABLE artworks (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     category VARCHAR(100),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
 );
 
 
@@ -25,15 +29,22 @@ CREATE TABLE artworks (
 CREATE TABLE biography (
     id INT PRIMARY KEY,
     content TEXT,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
 );
 
 
 
 CREATE TABLE messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NULL,
     name VARCHAR(150),
     email VARCHAR(150),
     message TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE SET NULL
 );

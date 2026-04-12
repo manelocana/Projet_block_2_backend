@@ -1,36 +1,40 @@
 
 
-
 from models.message import Message
-
 
 
 
 
 class MessageController:
 
-    @staticmethod
-    def create(body):
+    @classmethod
+    def create(clase, body):
+
         if not body:
-            return {"error": "Body vacío"}, 400
+            return {"error": "Body vide"}, 400
 
         name = body.get("name")
         email = body.get("email")
-        message = body.get("message")
+        content = body.get("message")
 
-        if not name or not email or not message:
-            return {"error": "Campos obligatorios"}, 400
+        if not name or not email or not content:
+            return {"error": "il manque un parametre a remplir"}, 400
 
-        Message.create(name, email, message)
+        message = Message.create(name, email, content)
 
-        return {"message": "Mensaje enviado correctamente"}, 201
+        return {
+            "message": "message envoi ok",
+            "data": message.to_dict()
+        }, 201
 
 
 
-    @staticmethod
-    def get_all(role):
-        if role != "admin":
-            return {"error": "No autorizado"}, 403
+
+    @classmethod
+    def get_all(clase):
 
         messages = Message.get_all()
-        return messages, 200
+
+        data = [msg.to_dict() for msg in messages]
+
+        return data, 200

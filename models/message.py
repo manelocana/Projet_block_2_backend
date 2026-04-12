@@ -1,32 +1,42 @@
 
 
-
 from db_config import get_db_connection
-
-
-
 
 
 class Message:
 
-    @staticmethod
-    def create(name, email, message):
-        conn = get_db_connection()
-        cursor = conn.cursor()
+    def __init__(self, id, name, email, content):
+        self.id = id
+        self.name = name
+        self.email = email
+        self.content = content
 
-        cursor.execute(
-            "INSERT INTO messages (name, email, message) VALUES (%s, %s, %s)",
-            (name, email, message)
+    
+    """ convert db a object """
+    @classmethod
+    def from_row(clase, row):
+        return clase(
+            id=row["id"],
+            name=row["name"],
+            email=row["email"],
+            content=row["message"]  
         )
 
-        conn.commit()
-        cursor.close()
-        conn.close()
+    
+    """ object a dict """
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "message": self.content
+        }
 
-        
+    
 
-    @staticmethod
-    def get_all():
+
+    @classmethod
+    def get_all(clase):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
@@ -36,4 +46,26 @@ class Message:
         cursor.close()
         conn.close()
 
-        return rows
+        """ convert chaque file en object """
+        return [clase.from_row(row) for row in rows]
+
+    
+
+
+    @classmethod
+    def create(clase, name, email, content):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "INSERT INTO messages (name, email, message) VALUES (%s, %s, %s)",
+            (name, email, content)
+        )
+
+        conn.commit()
+        new_id = cursor.lastrowid
+
+        cursor.close()
+        conn.close()
+
+        return clase(new_id, name, email, content)
