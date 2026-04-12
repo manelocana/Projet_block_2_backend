@@ -179,7 +179,6 @@ Elle permet :
 ## 🌐 Endpoints de l’API
 
 
-```
 
 🔐 Authentification
 | Méthode | Route         | Description               |
@@ -216,7 +215,6 @@ Elle permet :
 | POST    | /api/contact  | Envoyer un message                   |
 | GET     | /api/messages | Voir les messages (admin uniquement) |
 
-```
 
 
 ---
