@@ -1,5 +1,5 @@
 Backend Python from Scratch (Block 2)
-# 🟦 BLOCK 2 — API Backend en Python pur (sans framework)
+# 🟦 BLOCK 2 — API Backend en Python from scratch (sans framework)
 
 ## 📌 Introduction
 
@@ -46,7 +46,7 @@ Le serveur utilise le module natif http.server de Python.
 
 Le projet suit une architecture inspirée du modèle MVC simplifié :
 
-Requête HTTP → Handler → Controller → Model → Base de données → Réponse JSON
+    Requête HTTP → Handler → Controller → Model → Base de données → Réponse JSON
 
 
 ---
@@ -55,6 +55,8 @@ Requête HTTP → Handler → Controller → Model → Base de données → Rép
 
 ## 📁 Structure du projet
 
+
+```
 project/
 │
 ├── main.py                  # Point d’entrée du serveur HTTP
@@ -75,6 +77,7 @@ project/
 ├── tests/                   # Tests unitaires avec pytest
 │
 └── README.md
+```
 
 
 ---
@@ -176,6 +179,8 @@ Elle permet :
 ## 🌐 Endpoints de l’API
 
 
+```
+
 🔐 Authentification
 | Méthode | Route         | Description               |
 | ------- | ------------- | ------------------------- |
@@ -210,6 +215,8 @@ Elle permet :
 | ------- | ------------- | ------------------------------------ |
 | POST    | /api/contact  | Envoyer un message                   |
 | GET     | /api/messages | Voir les messages (admin uniquement) |
+
+```
 
 
 ---
