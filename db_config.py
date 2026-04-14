@@ -6,6 +6,8 @@ import mysql.connector
 from dotenv import load_dotenv
 
 
+print(mysql.connector.connect)
+
 
 load_dotenv()
 

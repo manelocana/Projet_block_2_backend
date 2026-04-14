@@ -3,6 +3,8 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+from urllib.parse import urlparse
+
 from controllers.user_controller import UserController
 from controllers.artwork_controller import ArtworkController
 from controllers.biography_controller import BiographyController
@@ -28,10 +30,9 @@ class Response:
 
         """ Headers basics """
         self.handler.send_header("Content-Type", "application/json; charset=utf-8")
-        self.handler.send_header("Content-Length", str(len(body)))
 
-        """ requetes depuis le frontend (CORS) """
-        self.handler.send_header("Access-Control-Allow-Origin", "*")
+        """ pour les requetes http """
+        self.handler.send_header("Content-Length", str(len(body)))
 
         self.handler.end_headers()
 
@@ -59,11 +60,18 @@ class Handler(BaseHTTPRequestHandler):
             return {}
 
 
+    """ unifier le path, eviter problemes """
+    def get_path(self):
+        return urlparse(self.path).path
+    
+
+
     """ separer la ID de la URL  (/api/users/5 → 5) """
     def get_id(self):
         try:
-            return int(self.path.rstrip("/").split("/")[-1])
-        except:
+            path = self.get_path()
+            return int(path.rstrip("/").split("/")[-1])
+        except ValueError:
             return None
 
 
@@ -79,47 +87,54 @@ class Handler(BaseHTTPRequestHandler):
         res = Response(self)    
         """ body, pour envoyer les données """  
         body = self.parse_body()  
+        path = self.get_path()
 
-        if self.path == "/api/register":
+
+
+        if path == "/api/register":
             response, status = UserController.register(body)
             return res.json(response, status)
 
 
-        if self.path == "/api/login":
+        if path == "/api/login":
             response, status = UserController.login(body)
             return res.json(response, status)
 
 
-        if self.path == "/api/artworks":
+        if path == "/api/artworks":
+            if not self.is_admin():
+                return res.json({"error": "user-id requis"}, 400)
+            
             response, status = ArtworkController.create(body)
             return res.json(response, status)
 
 
-        if self.path == "/api/contact":
+        if path == "/api/contact":
             response, status = MessageController.create(body)
             return res.json(response, status)
 
 
         """ si y a pas des routes, montrer erreur """
-        self.send_response(404)
-        self.end_headers()
+        return res.json({"error": "Not found"}, 404)
 
 
 
     """ get = regarder-lire """
     def do_GET(self):
         res = Response(self)
+        path =  self.get_path()
 
-        if self.path == "/":
+
+        if path == "/":
             return res.json({"message": "API simple sans framework, depuis scratch"})
 
 
-        if self.path.startswith("/api/artworks"):
+        if path == "/api/artworks":
             response, status = ArtworkController.get_all()
             return res.json(response, status)
 
 
-        if self.path == "/api/users":
+        if path == "/api/users":
             if not self.is_admin():
                 return res.json({"error": "Non autorisé"}, 403)
 
@@ -127,7 +142,7 @@ class Handler(BaseHTTPRequestHandler):
             return res.json(response, status)
 
 
-        if self.path == "/api/biography":
+        if path == "/api/biography":
             if not self.headers.get("User-Id"):
                 return res.json({"error": "user-id requis"}, 400)
 
@@ -135,7 +150,7 @@ class Handler(BaseHTTPRequestHandler):
             return res.json(response, status)
 
 
-        if self.path == "/api/messages":
+        if path == "/api/messages":
             if not self.is_admin():
                 return res.json({"error": "Non autorisé"}, 403)
 
@@ -143,18 +158,18 @@ class Handler(BaseHTTPRequestHandler):
             return res.json(response, status)
 
 
-        self.send_response(404)
-        self.end_headers()
+        return res.json({"error": "Not found"}, 404)
 
 
-    """ put = mise a jour-actualize """
+    """ put = mise a jour-actualiser """
     def do_PUT(self):
         res = Response(self)
         body = self.parse_body()
         resource_id = self.get_id()
+        path = self.get_path()
 
 
-        if self.path.startswith("/api/artworks/"):
+        if path.startswith("/api/artworks/"):
             if not resource_id:
                 return res.json({"error": "ID incorrect"}, 400)
 
@@ -162,7 +177,7 @@ class Handler(BaseHTTPRequestHandler):
             return res.json(response, status)
 
 
-        if self.path == "/api/biography":
+        if path == "/api/biography":
             if not self.headers.get("User-Id"):
                 return res.json({"error": "Non autorisé"}, 403)
 
@@ -170,7 +185,7 @@ class Handler(BaseHTTPRequestHandler):
             return res.json(response, status)
 
         
-        if self.path.startswith("/api/users/"):
+        if path.startswith("/api/users/"):
             if not resource_id:
                 return res.json({"error": "ID incorrect"}, 400)
 
@@ -178,9 +193,8 @@ class Handler(BaseHTTPRequestHandler):
             return res.json(response, status)
 
 
+        return res.json({"error": "Not found"}, 404)
 
-        self.send_response(404)
-        self.end_headers()
 
 
 
@@ -188,16 +202,17 @@ class Handler(BaseHTTPRequestHandler):
     def do_DELETE(self):
         res = Response(self)
         resource_id = self.get_id()
+        path = self.get_path()
 
-        if self.path.startswith("/api/artworks/"):
+
+        if path.startswith("/api/artworks/"):
             if not resource_id:
                 return res.json({"error": "ID incorrect"}, 400)
 
             response, status = ArtworkController.delete(resource_id)
             return res.json(response, status)
 
-        self.send_response(404)
-        self.end_headers()
+        return res.json({"error": "Not found"}, 404)
 
 
 
