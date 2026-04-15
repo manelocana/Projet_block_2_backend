@@ -22,7 +22,7 @@ Ce projet reproduit de manière simplifiée le comportement interne d’un frame
 
 ### ▶️ Démarrer le serveur
 
-<!-- bash -->
+
     python main.py
 
 
