@@ -12,7 +12,7 @@ class MessageController:
 
         if not body:
             return {"error": "Body vide"}, 400
-
+        
         name = body.get("name")
         email = body.get("email")
         content = body.get("message")
@@ -20,12 +20,16 @@ class MessageController:
         if not name or not email or not content:
             return {"error": "il manque un parametre a remplir"}, 400
 
-        message = Message.create(name, email, content)
+        try:
+            message = Message.create(name, email, content)
 
-        return {
-            "message": "message envoi ok",
-            "data": message.to_dict()
-        }, 201
+            return {
+                "message": "message envoi ok",
+                "data": message.to_dict()
+            }, 201
+        
+        except Exception as e:
+            return {"error": str(e)}, 500
 
 
 
@@ -33,8 +37,12 @@ class MessageController:
     @classmethod
     def get_all(clase):
 
-        messages = Message.get_all()
+        try:
+            messages = Message.get_all()
 
-        data = [msg.to_dict() for msg in messages]
+            data = [msg.to_dict() for msg in messages]
 
-        return data, 200
+            return data, 200
+        
+        except Exception as e:
+            return {"error": str(e)}, 500

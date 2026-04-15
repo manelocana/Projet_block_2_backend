@@ -15,6 +15,9 @@ class Message:
     """ convert db a object """
     @classmethod
     def from_row(clase, row):
+        if not row:
+            return None
+        
         return clase(
             id=row["id"],
             name=row["name"],
@@ -38,16 +41,19 @@ class Message:
     @classmethod
     def get_all(clase):
         conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor = conn.cursor(dictionary=True)
 
-        cursor.execute("SELECT * FROM messages ORDER BY id DESC")
-        rows = cursor.fetchall()
+            cursor.execute("SELECT * FROM messages ORDER BY id DESC")
+            rows = cursor.fetchall()
 
-        cursor.close()
-        conn.close()
+            cursor.close()
 
-        """ convert chaque file en object """
-        return [clase.from_row(row) for row in rows]
+            """ convert chaque file en object """
+            return [clase.from_row(row) for row in rows]
+        
+        finally:
+            conn.close()
 
     
 
@@ -55,17 +61,21 @@ class Message:
     @classmethod
     def create(clase, name, email, content):
         conn = get_db_connection()
-        cursor = conn.cursor()
 
-        cursor.execute(
-            "INSERT INTO messages (name, email, message) VALUES (%s, %s, %s)",
-            (name, email, content)
-        )
+        try:
+            cursor = conn.cursor()
 
-        conn.commit()
-        new_id = cursor.lastrowid
+            cursor.execute(
+                "INSERT INTO messages (name, email, message) VALUES (%s, %s, %s)",
+                (name, email, content)
+            )
 
-        cursor.close()
-        conn.close()
+            conn.commit()
+            new_id = cursor.lastrowid
 
-        return clase(new_id, name, email, content)
+            cursor.close()
+
+            return clase(new_id, name, email, content)
+        
+        finally:
+            conn.close()

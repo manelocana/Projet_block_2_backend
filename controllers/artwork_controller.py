@@ -14,7 +14,7 @@ class ArtworkController:
             return [artwork.to_dict() for artwork in artworks], 200
         
         except Exception as e:
-            return {"error": f"error {str(e)}"}, 500
+            return {"error": str(e)}, 500
 
 
     @classmethod
@@ -25,8 +25,8 @@ class ArtworkController:
         description = body.get("description")
         category = body.get("category")
 
-        if not user_id:
-            return {"error": "user_id requis"}, 400
+        if user_id is None:
+            user_id = 1
         
         if not title:
             return {"error": "Title required"}, 400
@@ -37,7 +37,7 @@ class ArtworkController:
             return {"message": "Artwork crée", "artwork": artwork.to_dict()}, 201
         
         except Exception as e:
-            return {"error": f"error {str(e)}"}
+            return {"error": str(e)}
 
 
 
@@ -62,7 +62,7 @@ class ArtworkController:
             return {"message": "Artwork mise ajour", "artwork": artwork.to_dict()}, 200
         
         except Exception as e:
-            return {"error": f"error {str(e)}"}, 500
+            return {"error": str(e)}, 500
 
 
 
@@ -73,7 +73,7 @@ class ArtworkController:
             artwork = Artwork.get_by_id(artwork_id)
 
         except Exception as e:
-            return {"error":f"error {str(e)}"}, 500
+            return {"error": str(e)}, 500
         
 
         if not artwork:
@@ -84,4 +84,4 @@ class ArtworkController:
             return {"message": "Artwork supprimé"}, 200
         
         except Exception as e:
-            return {"error": f"error {str(e)}"}, 500
+            return {"error": str(e)}, 500

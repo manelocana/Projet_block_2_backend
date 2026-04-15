@@ -27,7 +27,8 @@ CREATE TABLE artworks (
 
 
 CREATE TABLE biography (
-    id INT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNIQUE NOT NULL,
     content TEXT,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (id)
@@ -39,9 +40,9 @@ CREATE TABLE biography (
 
 CREATE TABLE messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NULL,
-    name VARCHAR(150),
-    email VARCHAR(150),
+    user_id INT UNIQUE NULL,
+    name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL,
     message TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id)

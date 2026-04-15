@@ -14,6 +14,7 @@ class UserController:
         if not body:
             return {"error": "body vide"}, 400
 
+        
         username = body.get("username")
         email = body.get("email")
         password = body.get("password")
@@ -24,13 +25,17 @@ class UserController:
         if User.find_by_email(email):
             return {"error": "email déjà enregistré"}, 400
 
-        """ instancier object user """
-        user = User.create(username, email, password)
+        try:
+            """ instancier object user """
+            user = User.create(username, email, password)
 
-        return {
-            "message": "User enregistré",
-            "user": user.to_dict()
-        }, 201
+            return {
+                "message": "User enregistré",
+                "user": user.to_dict()
+            }, 201
+        
+        except Exception as e:
+            return {"error": str(e)}, 500
 
 
 
@@ -57,24 +62,30 @@ class UserController:
         if user.password != hashed_password:
             return {"error": "non autorisé"}, 401
 
-        return {
-            "message": "Login correct",
-            "user": user.to_dict()
-        }, 200
+        try:
+            return {
+                "message": "Login correct",
+                "user": user.to_dict()
+            }, 200
 
+        except Exception as e:
+            return {"error": str(e)}, 500
 
 
 
     @classmethod
     def get_all_users(clase):
 
-        users = User.get_all()
+        try:
+            users = User.get_all()
 
-        """ convert object data a dict-json """
-        data = [user.to_dict() for user in users]
+            """ convert object data a dict-json """
+            data = [user.to_dict() for user in users]
 
-        return data, 200
-
+            return data, 200
+        
+        except Exception as e:
+            return {"error": str(e)}, 500
 
 
 
@@ -96,9 +107,13 @@ class UserController:
         if not username or not email:
             return {"error": "remplir username o email"}, 400
 
-        user.update(username, email, password)
+        try:
+            user.update(username, email, password)
 
-        return {
-            "message": "utilisateur mise a jour",
-            "user": user.to_dict()
-        }, 200
+            return {
+                "message": "utilisateur mise a jour",
+                "user": user.to_dict()
+            }, 200
+        
+        except Exception as e:
+            return {"error": str(e)}, 500

@@ -1,20 +1,16 @@
 
 
-
 import time
 from controllers.user_controller import UserController
 
 
-# -------------------------
-# util para evitar duplicados en DB
-# -------------------------
+""" verifier que email c'est unique """
 def unique_email():
     return f"test_{int(time.time() * 1000)}@test.com"
 
 
-# -------------------------
-# REGISTER
-# -------------------------
+
+""" register """
 def test_register_success():
     body = {
         "username": "testuser",
@@ -27,6 +23,7 @@ def test_register_success():
     assert status == 201
     assert "user" in response
     assert response["user"]["email"] == body["email"]
+
 
 
 def test_register_missing_fields():
@@ -55,9 +52,7 @@ def test_register_duplicate_email():
     assert status == 400
 
 
-# -------------------------
-# LOGIN
-# -------------------------
+""" login """
 def test_login_success():
     email = unique_email()
 
@@ -74,6 +69,7 @@ def test_login_success():
 
     assert status == 200
     assert "user" in response
+
 
 
 def test_login_wrong_password():
@@ -93,6 +89,7 @@ def test_login_wrong_password():
     assert status == 401
 
 
+
 def test_login_user_not_found():
     response, status = UserController.login({
         "email": unique_email(),
@@ -102,9 +99,8 @@ def test_login_user_not_found():
     assert status == 404
 
 
-# -------------------------
-# UPDATE
-# -------------------------
+
+""" update """
 def test_update_user():
     email = unique_email()
 

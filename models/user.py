@@ -56,41 +56,46 @@ class User:
     @classmethod
     def create(clase, username, email, password, role="artist"):
         conn = get_db_connection()
-        cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-        hashed_password = clase.hash_password(password)
+            hashed_password = clase.hash_password(password)
 
-        cursor.execute(
-            "INSERT INTO users (username, email, password, role) VALUES (%s, %s, %s, %s)",
-            (username, email, hashed_password, role)
-        )
+            cursor.execute(
+                "INSERT INTO users (username, email, password, role) VALUES (%s, %s, %s, %s)",
+                (username, email, hashed_password, role)
+            )
 
-        conn.commit()
-        user_id = cursor.lastrowid
+            conn.commit()
+            user_id = cursor.lastrowid
 
-        cursor.close()
-        conn.close()
+            cursor.close()
 
-        return clase.find_by_id(user_id)
+            return clase.find_by_id(user_id)
 
+        finally:
+            conn.close()
     
     
 
     @classmethod
     def get_all(clase):
         conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor = conn.cursor(dictionary=True)
 
-        cursor.execute(
-            "SELECT id, username, email, role, created_at FROM users ORDER BY id DESC"
-        )
+            cursor.execute(
+                "SELECT id, username, email, role, created_at FROM users ORDER BY id DESC"
+            )
 
-        rows = cursor.fetchall()
+            rows = cursor.fetchall()
 
-        cursor.close()
-        conn.close()
+            cursor.close()
 
-        return [clase.from_row(row) for row in rows]
+            return [clase.from_row(row) for row in rows]
+        
+        finally:
+            conn.close()
 
 
 
@@ -98,15 +103,18 @@ class User:
     @classmethod
     def find_by_email(clase, email):
         conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor = conn.cursor(dictionary=True)
 
-        cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
-        row = cursor.fetchone()
+            cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+            row = cursor.fetchone()
 
-        cursor.close()
-        conn.close()
+            cursor.close()
 
-        return clase.from_row(row)
+            return clase.from_row(row)
+        
+        finally:
+            conn.close()
 
     
 
@@ -114,42 +122,49 @@ class User:
     @classmethod
     def find_by_id(clase, user_id):
         conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor = conn.cursor(dictionary=True)
 
-        cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
-        row = cursor.fetchone()
+            cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+            row = cursor.fetchone()
 
-        cursor.close()
-        conn.close()
+            cursor.close()
 
-        return clase.from_row(row)
+            return clase.from_row(row)
+        
+        finally:
+            conn.close()
 
     
 
     
     def update(self, username, email, password=None):
         conn = get_db_connection()
-        cursor = conn.cursor()
 
-        if password:
-            hashed = self.hash_password(password)
+        try:
+            cursor = conn.cursor()
 
-            cursor.execute(
-                "UPDATE users SET username=%s, email=%s, password=%s WHERE id=%s",
-                (username, email, hashed, self.id)
-            )
-            self.password = hashed
-        else:
-            cursor.execute(
-                "UPDATE users SET username=%s, email=%s WHERE id=%s",
-                (username, email, self.id)
-            )
+            if password:
+                hashed = self.hash_password(password)
 
-        conn.commit()
+                cursor.execute(
+                    "UPDATE users SET username=%s, email=%s, password=%s WHERE id=%s",
+                    (username, email, hashed, self.id)
+                )
+                self.password = hashed
+            else:
+                cursor.execute(
+                    "UPDATE users SET username=%s, email=%s WHERE id=%s",
+                    (username, email, self.id)
+                )
 
-        cursor.close()
-        conn.close()
+            conn.commit()
 
-        """ mise a jour del object en memoire """
-        self.username = username
-        self.email = email
+            cursor.close()
+
+            """ mise a jour del object en memoire """
+            self.username = username
+            self.email = email
+
+        finally:
+            conn.close()

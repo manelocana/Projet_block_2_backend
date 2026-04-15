@@ -9,7 +9,10 @@ class BiographyController:
     @classmethod
     def get(clase, headers):
 
-        user_id = headers.get("User-Id")
+        try:
+            user_id = int(headers.get("User-Id"))
+        except (TypeError, ValueError):
+            return {"error": "User ID non valide"}, 400
 
         if not user_id:
             return {"error": "user id non autorisé"}, 400
@@ -20,8 +23,12 @@ class BiographyController:
         if not bio:
             return {"message": "Y a pas biography"}, 404
 
-        """ return un dict-json """
-        return bio.to_dict(), 200
+        try:
+            """ return un dict-json """
+            return bio.to_dict(), 200
+        
+        except Exception as e:
+            return {"error": str(e)}, 500
 
 
 
@@ -38,6 +45,7 @@ class BiographyController:
         if not user_id:
             return {"error": "User ID non valide"}, 400
 
+        
         content = body.get("content")
 
         if not content:
@@ -51,9 +59,14 @@ class BiographyController:
         else:
             bio.content = content
 
-        bio.save()
 
-        return {
-            "message": "Biography mise a jour",
-            "biography": bio.to_dict()
-        }, 200
+        try:
+            bio.save()
+
+            return {
+                "message": "Biography mise a jour",
+                "biography": bio.to_dict()
+            }, 200
+        
+        except Exception as e:
+            return {"error": str(e)}, 500

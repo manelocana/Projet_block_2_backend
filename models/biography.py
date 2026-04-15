@@ -15,11 +15,11 @@ class Biography:
 
     """ db object """
     @classmethod
-    def from_row(clase, row):
+    def from_row(cls, row):
         if not row:
             return None
 
-        return clase(
+        return cls(
             id=row["id"],
             user_id=row["user_id"],
             content=row["content"]
@@ -37,47 +37,45 @@ class Biography:
    
 
     @classmethod
-    def get_by_user_id(clase, user_id):
+    def get_by_user_id(cls, user_id):
         conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM biography WHERE user_id=%s", (user_id, ))
 
-        cursor.execute("SELECT * FROM biography WHERE user_id=%s", (user_id, ))
+            row = cursor.fetchone()
 
-        row = cursor.fetchone()
+            cursor.close()
 
-        cursor.close()
-        conn.close()
+            return cls.from_row(row)
+        
+        finally:
+            conn.close()
 
-        return clase.from_row(row)
 
 
 
     """ creer o faire la mise a jour, si deja existe """
     def save(self):
         conn = get_db_connection()
-        cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-        """ voir si y a des données """
-        cursor.execute(
-            "SELECT id FROM biography WHERE user_id=%s",
-            (self.user_id,)
-        )
-
-        existing = cursor.fetchone()
-
-        if existing:
-            cursor.execute(
-                "UPDATE biography SET content=%s WHERE user_id=%s",
-                (self.content, self.user_id)
-            )
-
-        else:
-            cursor.execute(
-                "INSERT INTO biography (user_id, content) VALUES (%s, %s)",
+            """ voir si y a des données """
+            cursor.execute("""
+                INSERT INTO biography (user_id, content)
+                VALUES (%s, %s)
+                ON DUPLICATE KEY UPDATE content = VALUES(content)
+                """, 
                 (self.user_id, self.content)
             )
-            self.id = cursor.lastrowid
 
-        conn.commit()
-        cursor.close()
-        conn.close()
+            conn.commit()
+
+            if cursor.lastrowid:
+                self.id = cursor.lastrowid
+                
+            cursor.close()
+
+        finally:
+            conn.close()
